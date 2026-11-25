@@ -133,6 +133,7 @@ export function createHandInteraction({
     for (const piece of pieces) {
       if (
         piece.state === "clasificado" ||
+        piece.state === "sujeto" ||
         isAlreadyHeld(piece)
       ) {
         continue;

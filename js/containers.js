@@ -4,25 +4,25 @@ import { CATEGORIES } from "./pieces.js";
 
 // Posiciones de los cuatro recipientes.
 export const CONTAINER_POSITIONS = [
-  { x: -1.70, z: 3.1 },
-  { x: -0.57, z: 3.1 },
-  { x: 0.57, z: 3.1 },
-  { x: 1.70, z: 3.1 }
+  { x: -1.32, z: 3.1 },
+  { x: -0.44, z: 3.1 },
+  { x: 0.44, z: 3.1 },
+  { x: 1.32, z: 3.1 }
 ];
 
 export const CONTAINER_SIZE = {
-  width: 0.94,
-  depth: 0.94,
-  height: 0.58,
-  wallThickness: 0.06,
-  baseThickness: 0.08
+  width: 0.78,
+  depth: 0.70,
+  height: 0.38,
+  wallThickness: 0.04,
+  baseThickness: 0.05
 };
 
 const SHELF = {
-  centerY: 0.75,
-  thickness: 0.1,
-  width: 4.45,
-  depth: 1.25,
+  centerY: 0.70,
+  thickness: 0.08,
+  width: 3.55,
+  depth: 1.05,
   z: 3.1
 };
 
@@ -131,8 +131,8 @@ function createShelf(scene, addStaticBox) {
   // Cuatro patas.
   const legHeight = SHELF.centerY - SHELF.thickness / 2;
 
-  for (const x of [-2.05, 2.05]) {
-    for (const dz of [-0.45, 0.45]) {
+  for (const x of [-1.62, 1.62]) {
+    for (const dz of [-0.38, 0.38]) {
       createPhysicalBox(
         scene,
         addStaticBox,

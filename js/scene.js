@@ -1,4 +1,4 @@
-﻿
+
 import * as THREE from "three";
 
 export const TABLE_POSITIONS = [
@@ -9,9 +9,9 @@ export const TABLE_POSITIONS = [
 ];
 
 export const TABLE_SIZE = {
-  width: 1.38,
-  depth: 0.90,
-  height: 0.8,
+  width: 1.20,
+  depth: 0.75,
+  height: 0.75,
   thickness: 0.1
 };
 

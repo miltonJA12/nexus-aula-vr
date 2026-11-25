@@ -1,8 +1,9 @@
-﻿import { installVRReferenceButtons } from "./vr-reference-buttons.js";
+import { installVRReferenceButtons } from "./vr-reference-buttons.js";
 import {
   integrateClassroom
 } from "./classroom-integration.js";
 
+import { installHandLaserPointers } from "./hand-laser-pointers.js";
 import * as THREE from "three";
 
 import {
@@ -869,6 +870,7 @@ function animate() {
 
     // Primero procesar los botones.
     updateVRButtons(xr.hands, delta);
+    nexusHandLasers.update(delta);
 
     // Después procesar figuras físicas.
     interaction.update(delta);
@@ -898,6 +900,16 @@ function animate() {
 
 }
 
+const nexusHandLasers = installHandLaserPointers({
+  scene,
+  renderer,
+  hands: xr.hands,
+  vrButtons,
+  startGame,
+  resetGame,
+  pieces,
+  game
+});
 renderer.setAnimationLoop(animate);
 
 // Integración de selección WebXR tomada del proyecto de referencia.

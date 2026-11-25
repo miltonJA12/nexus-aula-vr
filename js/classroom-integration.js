@@ -1,4 +1,4 @@
-﻿import * as THREE from "three";
+import * as THREE from "three";
 
 import {
   GLTFLoader
@@ -25,10 +25,10 @@ export const CLASSROOM = {
 // Recipientes: parte posterior.
 
 const TABLE_X = [1.15, 2.65, 4.15, 5.65];
-const TABLE_Z = -6.15;
+const TABLE_Z = -5.15;
 
 const BIN_CENTER_X = CLASSROOM.centerX;
-const BIN_CENTER_Z = -1.60;
+const BIN_CENTER_Z = -2.35;
 
 export const PLAYER_START = {
   x: 3.445,
@@ -96,7 +96,7 @@ function relocateTables({
     ...tables.map(t => t.userData.width || 1.38)
   );
 
-  const separacionMesas = 0.13;
+  const separacionMesas = 0.17;
 
   const anchoFila =
     tables.length * anchoMesa +
@@ -115,7 +115,7 @@ function relocateTables({
     (CLASSROOM.minX + CLASSROOM.maxX) / 2;
 
   const inicio =
-    centroSalon - anchoFila / 2 + anchoMesa / 2 - 0.30;
+    centroSalon - anchoFila / 2 + anchoMesa / 2;
   // NEXUS_AJUSTE_CENTRADO_030
 
   const tableCentersX = tables.map(
@@ -194,7 +194,7 @@ function relocateContainers({ scene, containers, world }) {
     Math.abs(body.position.z - originalZ) < 0.65 &&
     body.position.y > 0.05 && body.position.y < 0.85 &&
     (Math.abs(body.position.x) < 0.06 ||
-     Math.abs(Math.abs(body.position.x) - 2.05) < 0.06)
+     Math.abs(Math.abs(body.position.x) - 1.62) < 0.06)
   );
   shelfBodies.forEach(body => moveBody(body, dx, dz));
 
@@ -204,7 +204,7 @@ function relocateContainers({ scene, containers, world }) {
     if (Math.abs(mesh.position.z - originalZ) >= 0.65) continue;
     if (mesh.position.y <= 0.05 || mesh.position.y >= 0.85) continue;
     if (Math.abs(mesh.position.x) < 0.06 ||
-        Math.abs(Math.abs(mesh.position.x) - 2.05) < 0.06) {
+        Math.abs(Math.abs(mesh.position.x) - 1.62) < 0.06) {
       moveMesh(mesh, dx, dz);
     }
   }
