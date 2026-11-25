@@ -1,0 +1,942 @@
+﻿
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <meta name="theme-color" content="#f6f3ed">
+
+  <meta name="description"
+        content="Taller de Formas. Laboratorio universitario de clasificación geométrica con física y realidad virtual.">
+
+  <title>Taller de Formas | Interacción virtual 3.2</title>
+
+  <link rel="icon"
+        type="image/svg+xml"
+        href="./assets/favicon.svg">
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+  >
+
+  <link rel="stylesheet" href="./css/style.css">
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
+      "cannon-es": "https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js"
+    }
+  }
+  </script>
+<style>
+/* NEXUS_REWORK_2026 */
+
+:root {
+  --nx-bg: #101c25;
+  --nx-panel: #192b37;
+  --nx-border: #354955;
+  --nx-text: #edf3f4;
+  --nx-muted: #a5b7c0;
+  --nx-accent: #e58c50;
+  --nx-green: #69b6aa;
+}
+
+body {
+  background: #101c25 !important;
+}
+
+body > header,
+body > .header,
+body > .navbar,
+body > .site-header {
+  background: #101c25 !important;
+  color: #edf3f4 !important;
+  border-bottom: 1px solid #354955 !important;
+}
+
+body > header a,
+body > .header a,
+body > .navbar a {
+  color: #edf3f4 !important;
+}
+
+/* Presentacion */
+
+.nexus-rework {
+  background: #101c25 !important;
+  color: #edf3f4 !important;
+  padding: 72px max(5%, 24px) 55px !important;
+  margin: 0 !important;
+  min-height: auto !important;
+  width: 100% !important;
+  max-width: none !important;
+  display: block !important;
+  box-sizing: border-box !important;
+}
+
+.nexus-rework * {
+  box-sizing: border-box;
+}
+
+.nx-layout {
+  max-width: 1320px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 55px;
+  align-items: center;
+}
+
+.nx-eyebrow {
+  color: var(--nx-accent);
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.4px;
+  margin-bottom: 25px;
+}
+
+.nexus-rework .nx-title {
+  color: var(--nx-text) !important;
+  font-family: Arial, sans-serif !important;
+  font-weight: 800 !important;
+  font-style: normal !important;
+  font-size: clamp(44px, 5.6vw, 82px) !important;
+  line-height: 1.04 !important;
+  letter-spacing: -2.5px !important;
+  margin: 0 0 26px !important;
+  max-width: 750px;
+}
+
+.nx-title span {
+  display: block;
+  color: var(--nx-accent);
+  font-style: normal;
+}
+
+.nx-description {
+  font: 400 16px/1.9 Arial, sans-serif;
+  color: var(--nx-muted) !important;
+  max-width: 540px;
+  margin-bottom: 32px;
+}
+
+.nx-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.nx-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  padding: 15px 23px;
+  font: 700 13px Arial, sans-serif;
+  text-decoration: none;
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.nx-button-primary {
+  background: var(--nx-accent);
+  color: #14222b !important;
+}
+
+.nx-button-primary:hover {
+  background: #f2a572;
+}
+
+.nx-button-secondary {
+  background: transparent;
+  color: var(--nx-text) !important;
+  border: 1px solid var(--nx-border);
+}
+
+.nx-button-secondary:hover {
+  background: #263a47;
+}
+
+.nx-note {
+  margin-top: 28px;
+  color: #839aa7;
+  font: 400 12px Arial, sans-serif;
+}
+
+/* Esquema tecnico del aula */
+
+.nx-plan-panel {
+  background: var(--nx-panel);
+  border: 1px solid var(--nx-border);
+  border-radius: 5px;
+  padding: 22px;
+  box-shadow: 13px 13px 0 #0c161e;
+}
+
+.nx-plan-top,
+.nx-plan-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--nx-muted);
+  font: 700 10px Arial, sans-serif;
+  letter-spacing: 1.4px;
+}
+
+.nx-plan-panel svg {
+  width: 100%;
+  height: auto;
+  max-height: 370px;
+  display: block;
+  margin: 20px auto;
+}
+
+/* Nueva distribucion de indicadores */
+
+.nx-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  max-width: 1320px;
+  margin: 64px auto 0;
+}
+
+.nx-metric {
+  background: #192b37;
+  border-left: 3px solid #e58c50;
+  padding: 22px 20px;
+}
+
+.nx-metric strong {
+  display: block;
+  color: #edf3f4;
+  font: 700 35px Arial, sans-serif;
+  margin-bottom: 7px;
+}
+
+.nx-metric span {
+  color: #a5b7c0;
+  font: 400 12px Arial, sans-serif;
+}
+
+/* Secciones informativas restantes */
+
+.nx-old-stats-hidden {
+  display: none !important;
+}
+
+.nexus-rework + section {
+  scroll-margin-top: 20px;
+}
+
+@media (max-width: 900px) {
+  .nx-layout {
+    grid-template-columns: 1fr;
+    gap: 38px;
+  }
+
+  .nx-metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .nexus-rework {
+    padding: 48px 5% !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .nx-metrics {
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+  }
+
+  .nx-metric {
+    padding: 15px;
+  }
+
+  .nx-metric strong {
+    font-size: 29px;
+  }
+
+  .nx-plan-panel {
+    padding: 12px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+  <header class="site-header">
+    <nav class="navbar navbar-expand-lg">
+      <div class="container">
+        <a class="navbar-brand brand" href="#">
+          <span class="brand-symbol">◈</span>
+          Taller de <span class="brand-accent">Formas</span>
+        </a>
+
+        <span class="nav-version">
+          TecNM · Práctica 3.2
+        </span>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <section class="hero">
+      <div class="container">
+        <div class="row align-items-center gy-5">
+
+          <div class="col-lg-7">
+            <div class="eyebrow">
+              <span class="status-dot"></span>
+              DESARROLLO DE SOLUCIONES EN AMBIENTES VIRTUALES
+            </div>
+
+            <h1>
+              Aprender
+              <span>experimentando.</span>
+            </h1>
+
+            <p class="hero-description">
+              Un laboratorio interactivo para explorar el
+              comportamiento físico de los objetos y poner
+              a prueba la clasificación geométrica.
+              Veinte figuras, cuatro categorías y una
+              experiencia diseñada para realidad virtual.
+            </p>
+
+            <div class="hero-actions">
+              <a class="btn btn-primary-vr" href="#laboratorio">
+                Abrir laboratorio
+              </a>
+
+              <a class="btn btn-outline-vr" href="#instrucciones">
+                Cómo funciona
+              </a>
+            </div>
+
+            <p class="compatibility-note">
+              Vista previa disponible en computadora.
+              Experiencia inmersiva destinada a Meta Quest 3.
+            </p>
+          </div>
+
+          <div class="col-lg-5">
+            <div class="hero-visual" aria-hidden="true">
+              <div class="visual-orbit orbit-one"></div>
+              <div class="visual-orbit orbit-two"></div>
+
+              <div class="visual-core">
+                <div class="core-icon">⬡</div>
+                <div class="core-title">FORMAS Y FÍSICA</div>
+                <div class="core-subtitle">LABORATORIO 3.2</div>
+              </div>
+
+              <span class="floating-label label-one">
+                MOVIMIENTO
+              </span>
+
+              <span class="floating-label label-two">
+                GEOMETRÍA
+              </span>
+
+              <span class="floating-label label-three">
+                INTERACCIÓN
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="statistics">
+      <div class="container">
+        <div class="row g-3">
+
+          <div class="col-6 col-md-3">
+            <div class="stat-card">
+              <strong>04</strong>
+              <span>Mesas de trabajo</span>
+            </div>
+          </div>
+
+          <div class="col-6 col-md-3">
+            <div class="stat-card">
+              <strong>20</strong>
+              <span>Objetos geométricos</span>
+            </div>
+          </div>
+
+          <div class="col-6 col-md-3">
+            <div class="stat-card">
+              <strong>04</strong>
+              <span>Recipientes</span>
+            </div>
+          </div>
+
+          <div class="col-6 col-md-3">
+            <div class="stat-card">
+              <strong>01</strong>
+              <span>Objetivo: clasificar todo</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="instrucciones">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="section-tag">
+            GUÍA DE LA ACTIVIDAD
+          </span>
+
+          <h2>Así funciona el taller</h2>
+
+          <p>
+            La actividad combina observación, manipulación
+            y clasificación de cuerpos geométricos.
+          </p>
+        </div>
+
+        <div class="row g-4">
+
+          <div class="col-md-6 col-lg-3">
+            <article class="feature-card">
+              <span class="step-number">PASO 01</span>
+              <div class="feature-icon">◉</div>
+              <h3>Observa</h3>
+              <p>
+                Revisa las cuatro mesas y reconoce
+                las distintas figuras distribuidas
+                sobre ellas.
+              </p>
+            </article>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <article class="feature-card">
+              <span class="step-number">PASO 02</span>
+              <div class="feature-icon">✋</div>
+              <h3>Manipula</h3>
+              <p>
+                En realidad virtual, utiliza tus manos
+                para tomar, mover y soltar los objetos.
+              </p>
+            </article>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <article class="feature-card">
+              <span class="step-number">PASO 03</span>
+              <div class="feature-icon">⬡</div>
+              <h3>Clasifica</h3>
+              <p>
+                Deposita cada figura en su recipiente
+                y observa cómo actúan las colisiones
+                y la gravedad.
+              </p>
+            </article>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <article class="feature-card">
+              <span class="step-number">PASO 04</span>
+              <div class="feature-icon">▤</div>
+              <h3>Evalúa</h3>
+              <p>
+                Consulta tus aciertos, errores,
+                precisión y tiempos registrados
+                durante la actividad.
+              </p>
+            </article>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section lab-section"
+             id="laboratorio">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="section-tag">
+            ÁREA DE TRABAJO
+          </span>
+
+          <h2>Laboratorio interactivo</h2>
+
+          <p>
+            Un entorno tridimensional desarrollado con
+            Three.js y cannon-es para experimentar
+            con cuerpos físicos.
+          </p>
+        </div>
+
+        <div class="lab-panel">
+
+          <div class="lab-toolbar">
+            <div class="lab-title">
+              <span class="status-dot"></span>
+              SIMULADOR · NEXUS PHYSICS VR
+            </div>
+
+            <span id="lab-status" class="lab-status">
+              CARGANDO LABORATORIO
+            </span>
+          </div>
+
+          <div id="scene-container"
+               class="scene-container">
+
+            <div id="scene-placeholder"
+                 class="scene-placeholder">
+
+              <div class="placeholder-icon">⬡</div>
+
+              <h3>Preparando la escena</h3>
+
+              <p>
+                Cargando el entorno tridimensional
+                y sus componentes físicos.
+              </p>
+
+            </div>
+          </div>
+
+          <div class="lab-controls">
+            <button
+              id="start-vr"
+              type="button"
+              class="btn btn-primary-vr"
+              disabled
+            >
+              Iniciar realidad virtual
+            </button>
+
+            <button
+              id="reset-lab"
+              type="button"
+              class="btn btn-outline-vr"
+              disabled
+            >
+              Reiniciar actividad
+            </button>
+
+            <span id="xr-status" class="control-note">
+              Comprobando compatibilidad WebXR...
+            </span>
+          </div>
+
+        </div>
+
+        <p class="compatibility-note">
+          La vista de escritorio permite observar la
+          simulación y realizar pruebas técnicas.
+          La manipulación real mediante manos requiere
+          un visor compatible con WebXR.
+        </p>
+
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="section-tag">
+            MATERIAL DE CLASIFICACIÓN
+          </span>
+
+          <h2>Cuatro formas, cuatro categorías</h2>
+
+          <p>
+            Cada tipo de figura tiene un color distintivo
+            y un recipiente asignado.
+          </p>
+        </div>
+
+        <div class="row g-4">
+
+          <div class="col-6 col-lg-3">
+            <div class="category-card">
+              <span class="shape-icon sphere">●</span>
+              <h3>Esferas</h3>
+              <p>5 piezas · Azul</p>
+            </div>
+          </div>
+
+          <div class="col-6 col-lg-3">
+            <div class="category-card">
+              <span class="shape-icon cube">■</span>
+              <h3>Cubos</h3>
+              <p>5 piezas · Rojo</p>
+            </div>
+          </div>
+
+          <div class="col-6 col-lg-3">
+            <div class="category-card">
+              <span class="shape-icon pyramid">▲</span>
+              <h3>Pirámides</h3>
+              <p>5 piezas · Amarillo</p>
+            </div>
+          </div>
+
+          <div class="col-6 col-lg-3">
+            <div class="category-card">
+              <span class="shape-icon prism">⬡</span>
+              <h3>Prismas</h3>
+              <p>5 piezas · Verde</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-content">
+
+        <div>
+          <strong>Taller de Formas</strong>
+          <p>Práctica 3.2 · Interacción virtual</p>
+          <p>
+            Ingeniería en Tecnologías de la Información
+            y Comunicaciones
+          </p>
+          <p>TecNM · Campus Pachuca</p>
+        </div>
+
+        <div class="footer-right">
+          <p>Desarrollo: Milton Juarez Austria</p>
+          <p>Three.js · WebXR · cannon-es</p>
+          <p>Proyecto académico · 2026</p>
+        </div>
+
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="./js/main.js"></script>
+
+<style>
+.nexus-navegacion-lab {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 99999;
+  display: flex;
+  gap: 8px;
+}
+.nexus-navegacion-lab button,
+.nexus-navegacion-lab a {
+  background: #173B35;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 11px 15px;
+  font: 600 12px Arial, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+}
+.nexus-navegacion-lab button:hover,
+.nexus-navegacion-lab a:hover {
+  background: #286356;
+}
+</style>
+
+
+
+<script>
+(() => {
+  const boton = document.getElementById(
+    "nexus-pantalla-completa"
+  );
+
+  boton.addEventListener("click", async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch (error) {
+      console.warn(
+        "No se pudo activar pantalla completa:",
+        error
+      );
+    }
+  });
+
+  document.addEventListener("fullscreenchange", () => {
+    boton.textContent = document.fullscreenElement
+      ? "Salir de pantalla completa"
+      : "Pantalla completa";
+  });
+})();
+</script>
+<script id="nexus-redesign-script">
+(() => {
+  function aplicarNuevoDiseno() {
+
+    // Localizar la presentacion actual.
+    const titulo = document.querySelector("h1");
+
+    if (!titulo) {
+      console.warn("NEXUS: no se encontro el titulo principal.");
+      return;
+    }
+
+    const seccion = titulo.closest("section");
+
+    if (!seccion) {
+      console.warn("NEXUS: no se encontro la seccion principal.");
+      return;
+    }
+
+    // Nunca sustituir una seccion que contenga
+    // el laboratorio 3D.
+    if (seccion.querySelector("canvas, iframe")) {
+      console.warn("NEXUS: se conserva la seccion 3D.");
+      return;
+    }
+
+    // Recuperar el enlace REAL del boton anterior.
+    const enlaces = [
+      ...seccion.querySelectorAll("a[href]")
+    ];
+
+    const acceso = enlaces.find(a =>
+      /laboratorio|abrir|entrar/i.test(
+        a.textContent + " " + a.getAttribute("href")
+      )
+    );
+
+    const destino = acceso
+      ? acceso.getAttribute("href")
+      : "#laboratorio";
+
+    const destinoInfo = document.querySelector("#proyecto")
+      ? "#proyecto"
+      : "#experiencia";
+
+    // Nueva portada completamente diferente.
+    seccion.className = "nexus-rework";
+
+    seccion.innerHTML = `
+      <div class="nx-layout">
+
+        <div class="nx-information">
+
+          <div class="nx-eyebrow">
+            NEXUS / EXPERIENCIA INMERSIVA 2026
+          </div>
+
+          <h1 class="nx-title">
+            Laboratorio de
+            <span>clasificación.</span>
+          </h1>
+
+          <p class="nx-description">
+            Explora un salón virtual, toma objetos
+            geométricos con tus manos y encuentra
+            el recipiente que corresponde a cada figura.
+            Una experiencia interactiva construida
+            sobre un aula diseñada en SketchUp.
+          </p>
+
+          <div class="nx-actions">
+            <a class="nx-button nx-button-primary"
+               href="${destino}">
+              Acceder al entorno ↗
+            </a>
+
+            <a class="nx-button nx-button-secondary"
+               href="${destinoInfo}">
+              Explorar el proyecto
+            </a>
+          </div>
+
+          <p class="nx-note">
+            Three.js / WebXR / Cannon-es / SketchUp
+          </p>
+
+        </div>
+
+        <div class="nx-plan-panel">
+
+          <div class="nx-plan-top">
+            <span>PLANO DE DISTRIBUCIÓN</span>
+            <span>VISTA ESQUEMÁTICA</span>
+          </div>
+
+          <svg viewBox="0 0 440 350"
+               role="img"
+               aria-label="Distribucion esquematica del aula VR">
+
+            <rect x="48" y="19" width="344" height="309"
+                  fill="#223947"
+                  stroke="#8ba3ad" stroke-width="3"/>
+
+            <rect x="147" y="28" width="146" height="23"
+                  rx="3" fill="#6fb7aa"/>
+
+            <text x="220" y="43" text-anchor="middle"
+                  font-size="11" font-weight="bold"
+                  fill="#10212a">PIZARRÓN / MARCADOR</text>
+
+            <text x="220" y="76" text-anchor="middle"
+                  fill="#b7cad2" font-size="11">
+              RECIPIENTES
+            </text>
+
+            <g stroke="#b7cad2" stroke-width="2">
+              <rect x="76" y="89" width="67" height="42"
+                    rx="4" fill="#67b7a7"/>
+              <rect x="150" y="89" width="67" height="42"
+                    rx="4" fill="#d6ad66"/>
+              <rect x="224" y="89" width="67" height="42"
+                    rx="4" fill="#d47883"/>
+              <rect x="298" y="89" width="67" height="42"
+                    rx="4" fill="#5e9fc7"/>
+            </g>
+
+            <path d="M220 148 V207"
+                  fill="none" stroke="#e58c50"
+                  stroke-width="3"
+                  stroke-dasharray="7 6"/>
+
+            <path d="M212 197 L220 208 L228 197"
+                  fill="none" stroke="#e58c50"
+                  stroke-width="3"/>
+
+            <text x="220" y="178"
+                  text-anchor="middle"
+                  fill="#edb18a" font-size="11">
+              ÁREA DE INTERACCIÓN
+            </text>
+
+            <g fill="#426b7b" stroke="#9cbac7"
+               stroke-width="2">
+              <rect x="76" y="227" width="67" height="52"/>
+              <rect x="150" y="227" width="67" height="52"/>
+              <rect x="224" y="227" width="67" height="52"/>
+              <rect x="298" y="227" width="67" height="52"/>
+            </g>
+
+            <g fill="#edf3f4" font-size="15"
+               font-weight="bold" text-anchor="middle">
+              <text x="109" y="257">01</text>
+              <text x="183" y="257">02</text>
+              <text x="257" y="257">03</text>
+              <text x="331" y="257">04</text>
+            </g>
+
+            <text x="220" y="305"
+                  text-anchor="middle"
+                  fill="#b7cad2" font-size="11">
+              MESAS CON FIGURAS
+            </text>
+
+          </svg>
+
+          <div class="nx-plan-bottom">
+            <span>SIMULACIÓN FÍSICA</span>
+            <span>WEBXR READY</span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="nx-metrics">
+
+        <div class="nx-metric">
+          <strong>04</strong>
+          <span>Estaciones de trabajo</span>
+        </div>
+
+        <div class="nx-metric">
+          <strong>20</strong>
+          <span>Objetos disponibles</span>
+        </div>
+
+        <div class="nx-metric">
+          <strong>04</strong>
+          <span>Tipos geométricos</span>
+        </div>
+
+        <div class="nx-metric">
+          <strong>VR</strong>
+          <span>Interacción con manos</span>
+        </div>
+
+      </div>
+    `;
+
+    // Ocultar las tarjetas anteriores si estan
+    // agrupadas en otra seccion independiente.
+    const siguiente = seccion.nextElementSibling;
+
+    if (
+      siguiente &&
+      !siguiente.querySelector("canvas, iframe") &&
+      /mesas de trabajo/i.test(siguiente.textContent) &&
+      /recipientes/i.test(siguiente.textContent)
+    ) {
+      siguiente.classList.add("nx-old-stats-hidden");
+    }
+
+    // Actualizar elementos de identidad visibles.
+    document.querySelectorAll(
+      "header, .site-header, .navbar"
+    ).forEach(header => {
+      const hojas = [...header.querySelectorAll("*")];
+
+      const marca = hojas.find(el =>
+        el.children.length === 0 &&
+        /Taller de Formas/i.test(el.textContent.trim())
+      );
+
+      if (marca) {
+        marca.textContent = "NEXUS / AULA VR";
+      }
+    });
+
+    document.title = "NEXUS Aula VR | Laboratorio de clasificacion";
+
+    console.log(
+      "NEXUS: nueva interfaz aplicada sin modificar el laboratorio."
+    );
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      aplicarNuevoDiseno
+    );
+  } else {
+    aplicarNuevoDiseno();
+  }
+})();
+</script>
+</body>
+</html>
+
+
+
