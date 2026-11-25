@@ -45,6 +45,11 @@ export function setupXR({
 
         hand.add(handModel);
 
+    // NEXUS_HAND_SKELETON_V13
+    // Ocultar mano solida; conservar tracking WebXR.
+    handModel.visible = false;
+    hand.userData.keepXRPosition = true;
+
     // NEXUS_HAND_POINTER_V2
     const pointer = createNexusHandPointer(
       index === 0 ? 0x28d9ff : 0x55e6ac

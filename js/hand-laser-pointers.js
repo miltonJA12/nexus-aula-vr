@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { createXRHandSkeletons } from "./xr-hand-skeleton.js";
 import * as CANNON from "cannon-es";
 
 // NEXUS_REMOTE_LASER_V8
@@ -30,6 +31,8 @@ const MAX_DISTANCE = 12;
   const end = new THREE.Vector3();
 
   const cameraQuaternion = new THREE.Quaternion();
+  const aimQuaternion = new THREE.Quaternion();
+  const nativeDirection = new THREE.Vector3();
   const xrForward = new THREE.Vector3();
   const xrRight = new THREE.Vector3();
   const xrUp = new THREE.Vector3();
@@ -43,6 +46,12 @@ const MAX_DISTANCE = 12;
   // ============================================
   // CREAR PUNTEROS
   // ============================================
+
+  const skeletons = createXRHandSkeletons({
+    scene,
+    hands,
+    renderer
+  });
 
   const pointers = hands.map((hand, index) => {
     // Ocultar versiones antiguas.
@@ -131,7 +140,10 @@ const MAX_DISTANCE = 12;
       controllerHeld: false,
       handSelectHeld: false,
       keyboardHeld: false,
-      pendingPress: false
+      pendingPress: false,
+      nativeHandAim: false,
+      controller: null,
+      smoothedDirection: new THREE.Vector3()
     };
 
     // Eventos de pinza del visor.
@@ -157,6 +169,37 @@ const MAX_DISTANCE = 12;
     });
 
     const controller = renderer.xr.getController(index);
+
+    // NEXUS_NATIVE_HAND_AIM_V13
+    // Usar el rayo nativo del Meta Quest.
+    controller.userData.keepXRPosition = true;
+
+    if (!controller.parent) {
+      scene.add(controller);
+    }
+
+    pointer.controller = controller;
+
+    controller.addEventListener("connected", event => {
+      pointer.nativeHandAim = Boolean(
+        event.data?.hand
+      );
+
+      pointer.smoothedDirection.set(0, 0, 0);
+
+      console.log(
+        "NEXUS: seguimiento de mano",
+        index,
+        pointer.nativeHandAim
+          ? "rayo nativo Meta"
+          : "seguimiento por articulaciones"
+      );
+    });
+
+    controller.addEventListener("disconnected", () => {
+      pointer.nativeHandAim = false;
+      pointer.smoothedDirection.set(0, 0, 0);
+    });
 
     controller.addEventListener("selectstart", () => {
       pointer.controllerHeld = true;
@@ -383,6 +426,7 @@ const MAX_DISTANCE = 12;
   // ============================================
 
   function update(delta = 1 / 60) {
+    skeletons.update();
     if (!renderer.xr.isPresenting) {
       for (const pointer of pointers) {
         release(pointer);
@@ -460,35 +504,40 @@ const MAX_DISTANCE = 12;
         continue;
       }
 
+      // NEXUS_NATIVE_HAND_AIM_V13
+      // Respaldo: direccion anatomica del indice.
       direction.normalize();
 
-      const tilt = THREE.MathUtils.clamp(
-        direction.dot(xrUp),
-        -0.55,
-        0.55
-      );
+      // Meta Quest: apuntado nativo de la mano.
+      if (
+        pointer.nativeHandAim &&
+        pointer.controller?.visible
+      ) {
+        pointer.controller.updateWorldMatrix(true, false);
+        pointer.controller.getWorldQuaternion(
+          aimQuaternion
+        );
 
-      // Mantener ambos rayos separados.
-      const sideDistance = origin.clone()
-        .sub(xrHeadPosition)
-        .dot(xrRight);
+        nativeDirection.set(0, 0, -1)
+          .applyQuaternion(aimQuaternion)
+          .normalize();
 
-      const side = sideDistance < -0.02
-        ? -1
-        : sideDistance > 0.02
-          ? 1
-          : pointer.index === 0 ? -1 : 1;
+        if (nativeDirection.lengthSq() > 0.5) {
+          direction.copy(nativeDirection);
+        }
+      }
 
-      direction.copy(xrForward)
-        .addScaledVector(
-          xrRight,
-          side * 0.08
-        )
-        .addScaledVector(
-          xrUp,
-          tilt * 0.40
-        )
-        .normalize();
+      // Suavizado ligero para reducir temblores,
+      // sin forzar ambas manos hacia el visor.
+      const smooth = pointer.smoothedDirection;
+
+      if (smooth.lengthSq() < 0.5) {
+        smooth.copy(direction);
+      } else {
+        smooth.lerp(direction, 0.65).normalize();
+      }
+
+      direction.copy(smooth);
 
       raycaster.set(origin, direction);
 
